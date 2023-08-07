@@ -1,15 +1,25 @@
 import socket
 import tkinter as tk
 import threading
-import settings 
+import configparser
 
-host_ip_address = settings.host_ip  # Replace with the IP of the host PC
+# Initialize the configparser
+config = configparser.ConfigParser()
+
+# Read the config file
+config.read('settings.ini')
+
+# Accessing variables from the config file
+db_host = config.get('Host', 'host_ip')
+db_port = config.getint('Host', 'port')
+
+host_ip_address = db_host  # Replace with the IP of the host PC
 
 def listen_for_commands():
     # Create a socket (AF_INET for IPv4, SOCK_STREAM for TCP)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # Bind the socket to the gamer PC's IP and desired port number
-        s.bind(("0.0.0.0", settings.port))  # Replace settings.port with the same port number used in host.py
+        s.bind((db_host, db_port))  # Replace settings.port with the same port number used in host.py
         s.listen()
 
         print("Waiting for commands...")

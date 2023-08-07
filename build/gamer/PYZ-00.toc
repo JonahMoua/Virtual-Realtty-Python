@@ -203,7 +203,6 @@
   ('selectors',
    'C:\\Users\\nraug\\AppData\\Local\\Programs\\Python\\Python39\\lib\\selectors.py',
    'PYMODULE'),
-  ('settings', 'C:\\Users\\nraug\\Desktop\\vr360\\settings.py', 'PYMODULE'),
   ('shlex',
    'C:\\Users\\nraug\\AppData\\Local\\Programs\\Python\\Python39\\lib\\shlex.py',
    'PYMODULE'),

@@ -3,11 +3,20 @@ import requests
 import uuid
 from datetime import datetime
 import tkinter as tk
-import settings
+import configparser
 
-# Replace this with the IPs of the gamer PCs/Check setting.py to change
-gamer_pc1_ip = settings.pc_1
-gamer_pc2_ip = settings.pc_2
+
+# Initialize the configparser
+config = configparser.ConfigParser()
+
+# Read the config file
+config.read('settings.ini')
+
+# Accessing variables from the config file
+db_host = config.get('Host', 'host_ip')
+db_port = config.getint('Host', 'port')  # Parsing as integer
+db_cmp1 = config.get('Computer_1', 'pc_1')
+db_cmp2 = config.get('Computer_2', 'pc_2')
 
 # Function to get a unique identifier (UUID) for the host PC
 def get_unique_id():
@@ -17,15 +26,15 @@ def send_command_to_gamer_pc(ip, command):
     # Create a socket (AF_INET for IPv4, SOCK_STREAM for TCP)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # Connect to the gamer PC
-        s.connect((ip, settings.port))  # Replace settings.port with the desired port number
+        s.connect((ip, db_port))  # Replace settings.port with the desired port number
 
         # Send the command to the gamer PC
         s.sendall(command.encode())
 
 def send_start_game_command():
     try:
-        send_command_to_gamer_pc(gamer_pc1_ip, "START_GAME")
-        send_command_to_gamer_pc(gamer_pc2_ip, "START_GAME")
+        send_command_to_gamer_pc(db_cmp1, "START_GAME")
+        send_command_to_gamer_pc(db_cmp2, "START_GAME")
         # You can add more gamer PCs here if needed
         print("Command sent: START_GAME")
     except Exception as e:
