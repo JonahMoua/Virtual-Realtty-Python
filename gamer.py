@@ -1,7 +1,7 @@
 import socket
 import tkinter as tk
-import threading
 import configparser
+import threading
 
 # Initialize the configparser
 config = configparser.ConfigParser()
@@ -13,46 +13,35 @@ config.read('settings.ini')
 db_host = config.get('Host', 'host_ip')
 db_port = config.getint('Host', 'port')
 
-host_ip_address = db_host  # Replace with the IP of the host PC
+def handle_connection(connection):
+    while True:
+        # Receive commands from the host
+        command = connection.recv(1024).decode('utf-8')
 
-def listen_for_commands():
-    # Create a socket (AF_INET for IPv4, SOCK_STREAM for TCP)
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        # Bind the socket to the gamer PC's IP and desired port number
-        s.bind((db_host, db_port))  # Replace settings.port with the same port number used in host.py
-        s.listen()
+        if not command:
+            # If the connection is closed, exit the loop
+            break
 
-        print("Waiting for commands...")
-        while True:
-            conn, addr = s.accept()
-            with conn:
-                print("Received command from host:", conn.recv(1024).decode())
-                # Process the received command here (e.g., change UI element, start/stop game, etc.)
+        # Process the command and update the GUI (dummy logic)
+        if command == 'START_GAME':
+            # Your code to update the GUI here
+            print("Starting the game on gamer PC")
+            update_gui("Game started!")  # Call the update_gui function with the new information
 
-def update_gui():
-    # Function to update the GUI icon based on the communication status
-    if communication_status.get():
-        status_label.config(text="Communication: Successful", fg="green")
-    else:
-        status_label.config(text="Communication: Failed", fg="red")
-    root.after(5000, update_gui)  # Update the GUI every 5 seconds
+    print("Disconnected from host")
+    connection.close()
 
-def start_listening():
-    listen_thread = threading.Thread(target=listen_for_commands)
-    listen_thread.daemon = True
-    listen_thread.start()
-    update_gui()  # Start updating the GUI
+def update_gui(new_info):
+    # Your code to update the GUI here
+    # For example, if you have a label to display the information
+    info_label.config(text=new_info)
 
-# GUI setup
-root = tk.Tk()
-root.title("Gamer PC Communication Status")
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Gamer PC")
 
-communication_status = tk.BooleanVar()
-communication_status.set(False)
+    # Your GUI code here
+    info_label = tk.Label(root, text="Waiting for game start...")
+    info_label.pack(pady=20)
 
-status_label = tk.Label(root, text="Communication: Initializing...", fg="gray")
-status_label.pack(pady=20)
-
-start_listening()
-
-root.mainloop()
+    root.mainloop()
